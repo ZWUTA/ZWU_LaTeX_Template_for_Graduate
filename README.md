@@ -3,4 +3,6 @@
 
 学校给的毕设模板太印度啦，遂自己做一个。
 
+基于TeX Live 2023打造。
+
 ![image](https://github.com/ZWUTA/LaTeX_Template_Graduate/assets/63193298/4510670e-336b-4d6b-b964-12f2dcbc2c60)
