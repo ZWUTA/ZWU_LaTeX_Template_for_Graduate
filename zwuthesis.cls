@@ -1,5 +1,5 @@
 %
-% Copyright (C) 2015-2023 by ZWU TeX Users Group <https://github.com/zwutug>
+% Copyright (C) 2015-2023 by zwu TeX Users Group <https://github.com/zwutug>
 %
 % This file may be distributed and/or modified under the
 % conditions of the LaTeX Project Public License, either version 1.3c
@@ -11,8 +11,7 @@
 %
 
 \NeedsTeXFormat{LaTeX2e}[2017/04/15]
-\newcommand\zwuthesisversion{3.3.4}
-\ProvidesClass{zwuthesis}[2023/05/10 {\zwuthesisversion} ZWU thesis template]
+\ProvidesClass{zwuthesis}[zwu thesis template]
 
 % 报错和警告
 \newcommand\zwu@error[1]{%
@@ -159,19 +158,9 @@
 \zwu@define@key{
   degree = {
     choices = {
-      doctor,
-      master,
       bachelor,
     },
-    default = doctor,
-  },
-  degree-type = {
-    name = degree@type,
-    choices = {
-      academic,
-      professional,
-    },
-    default = academic,
+    default = bachelor,
   },
   main-language = {
     name = main@language,
@@ -319,7 +308,7 @@
       print,
       electronic,
     },
-    default = print,
+    default = electronic,
   },
   section-style = {
     name = section@style,
@@ -395,7 +384,6 @@
 % 载入 \cls{ctexbook}。
 \DeclareDefaultOption{\PassOptionsToClass{\CurrentOption}{ctexbook}}
 \ProcessKeyvalOptions*
-
 
 % \subsection{加载文档类和宏包}
 
@@ -633,17 +621,6 @@
 %
 % 注意重定义 \normalsize 应在 \pkg{unicode-math} 的 \cs{setmathfont} 前。
 \newcommand\zwu@set@font@size{%
-  \ifzwu@degree@graduate
-    \renewcommand\normalsize{%
-      \@setfontsize\normalsize{12bp}{20bp}%
-      \abovedisplayskip 12bp \@plus3bp \@minus7bp%
-      \abovedisplayshortskip \z@ \@plus3bp%
-      \belowdisplayshortskip 6.5bp \@plus3.5bp \@minus3bp%
-      \belowdisplayskip \abovedisplayskip
-      \let\@listi\@listI}%
-    %
-    % 注意第~\ref{sec:list} 节去掉了列表的间距，所以不再修改 \cs{@listi}。
-  \else
     \renewcommand\normalsize{%
       \@setfontsize\normalsize{12bp}{22bp}%
       \abovedisplayskip 12bp \@plus3bp \@minus7bp%
@@ -651,7 +628,6 @@
       \belowdisplayshortskip 6.5bp \@plus3.5bp \@minus3bp%
       \belowdisplayskip \abovedisplayskip
       \let\@listi\@listI}%
-  \fi
   \normalsize
   \ifx\MakeRobust\@undefined \else
       \MakeRobust\normalsize
@@ -1553,27 +1529,16 @@
   %
   % 页眉与该部分的章标题相同，宋体 10.5 磅（五号）居中。
   % 页码：宋体 10.5 磅、页面下脚居中。
-  \ifzwu@degree@graduate
-    \def\zwu@hf@font{\fontsize{10.5bp}{12bp}\selectfont}
-    \fancyhead[C]{\zwu@hf@font\leftmark}%
-    \fancyfoot[C]{\zwu@hf@font\thepage}%
-    \let\@mkboth\markboth
-    \def\chaptermark##1{%
-      \markboth{\CTEXifname{\CTEXthechapter\quad}{}\zwu@spacetitle{##1}}{}%
-    }%
-    \let\sectionmark\@gobble
-  \else
     %
     % 本科生要求除封面、扉页外，每面上部加页眉，
     % 用小 5 号字（9 bp）标注“中国科学技术大学本科毕业论文”，居中；
     % 从目录页开始在每面底部居中用小五宋体（9 bp）连续编页码。
     \def\zwu@hf@font{\fontsize{9bp}{12bp}\selectfont}
-    \fancyhead[l]{\zwu@hf@font 浙江万里学院大数据与软件工程学院本科毕业设计（论文）}%
+    \fancyhead[C]{\zwu@hf@font 中国科学技术大学本科毕业论文}%
     \fancyfoot[C]{\zwu@hf@font\thepage}%
     \let\@mkboth\@gobbletwo
     \let\chaptermark\@gobble
     \let\sectionmark\@gobble
-  \fi
 }
 \pagestyle{plain}
 
@@ -1607,21 +1572,12 @@
   \cleardoublepage
   \@mainmatterfalse
   \pagenumbering{Roman}%
-  \ifzwu@degree@graduate
-    \pagestyle{plain}%
-  \else
-    \pagestyle{headings}%
-  \fi
+  \pagestyle{headings}%
 }
 
 % 研究生要求“第 1 章”要另页起，但是本科生要求另面起。
 \renewcommand\mainmatter{%
-  \ifzwu@degree@graduate
-    \cleardoublepage
-    \pagenumbering{arabic}%
-  \else
-    \clearpage
-  \fi
+  \clearpage
   \pagestyle{plain}%
   \@mainmattertrue
 }
@@ -1790,26 +1746,10 @@
 \gdef\enkeywords#1{\renewcommand\zwu@keywords@en@text{#1}}
 
 % 定义一些常量。
-\ifzwu@degree@doctor
-  \newcommand\zwu@thesis@name{博士学位论文}
-  \newcommand\zwu@thesis@name@en{A dissertation for doctor's degree}
-\else
-  \ifzwu@degree@master
-    \newcommand\zwu@thesis@name{硕士学位论文}
-    \newcommand\zwu@thesis@name@en{A dissertation for master's degree}
-  \else
-    \newcommand\zwu@thesis@name{学士学位论文}
-    \newcommand\zwu@thesis@name@en{A dissertation for bachelor's degree}
-  \fi
-\fi
-\ifzwu@degree@type@academic
-  \newcommand\zwu@speciality@name{学科专业}
-\else
-  \ifzwu@degree@doctor
-    \renewcommand\zwu@thesis@name{专业博士学位论文}
-  \else
-    \renewcommand\zwu@thesis@name{专业硕士学位论文}
-  \fi
+
+\newcommand\zwu@thesis@name{学士学位论文}
+\newcommand\zwu@thesis@name@en{A dissertation for bachelor's degree}
+
   \ifzwu@cjk@font@mac
     \providecommand\lishu{\CJKfamily{zhli}}
   \else
@@ -1822,9 +1762,8 @@
     \fi
   \fi
   \newcommand\zwu@speciality@name{专业领域}
-\fi
 
-% 定义校徽颜色
+  % 定义校徽颜色
 %
 % 推迟定义颜色以避免调用 \pkg{xcolor} 时的警告
 \AtBeginDocument{
@@ -1856,9 +1795,9 @@
 % 所以只能使用直尺测量。
 \newcommand\zwu@speciality@sse{软件工程}
 \newcommand\zwu@title@page@graduate@zh{%
-  \zwusetup{language=chinese}%
-  \begin{titlepage}%
-    \zwu@pdfbookmark{封面}%
+\zwusetup{language=chinese}%
+\begin{titlepage}%
+  \zwu@pdfbookmark{封面}%
     \centering
     \parbox[t][0.6cm][t]{\textwidth}{%
       \raggedleft\fangsong\fontsize{14bp}{14bp}\selectfont
@@ -1868,27 +1807,9 @@
     \vskip 0.6cm%
     {\sffamily\fontsize{56bp}{56bp}\selectfont
       \zwu@thesis@name\par}%
-    \ifzwu@degree@type@academic
-      \vskip 2.0cm%
-    \else
-      \vskip 0.8cm%
-      \begingroup
-        \fontsize{26bp}{26bp}\selectfont
-        \ifx\zwu@professional@type\@empty
-          \null
-        \else
-          \lishu （\zwu@professional@type ）%
-        \fi
-        \par
-      \endgroup
-      \vskip 1.0cm%
-    \fi
-    \ifzwu@badge@color@blue
-      \textcolor{zwublue}{%
-        \includegraphics[height=4.1cm]{figures/zwu-badge.pdf}}%
-    \else
-      \includegraphics[height=4.1cm]{figures/zwu-badge.pdf}%
-    \fi\par
+    
+    \includegraphics[height=4.1cm]{figures/zwu-badge.pdf}%
+    \par
     \vskip 0.9cm%
     \parbox[t][3.5cm][c]{\textwidth}{%
       \centering\sffamily\bfseries\fontsize{26bp}{50bp}\selectfont
@@ -1924,24 +1845,9 @@
       University of Science and Technology of China\par}%
     {\sffamily\fontsize{26bp}{30bp}\selectfont
       \zwu@thesis@name@en\par}%
-    \ifzwu@degree@type@academic\else
-      \begingroup
-        \fontsize{16bp}{32bp}\selectfont
-        \ifx\zwu@professional@type@en\@empty
-          \null
-        \else
-          (\zwu@professional@type@en)
-        \fi
-        \par
-      \endgroup
-    \fi
     \vskip 2.5cm%
-    \ifzwu@badge@color@blue
-      \textcolor{zwublue}{%
-        \includegraphics[height=4.5cm]{figures/zwu-badge.pdf}}%
-    \else
-      \includegraphics[height=4.5cm]{figures/zwu-badge.pdf}%
-    \fi\par
+    \includegraphics[height=4.5cm]{figures/zwu-badge.pdf}%
+    \par
     \vskip 0.5cm%
     \parbox[t][4.5cm][c]{\textwidth}{%
       \centering\sffamily\bfseries\fontsize{26bp}{30bp}\selectfont
@@ -2035,32 +1941,26 @@
 }
 
 % 本科生的扉页（内封）
-
 \newcommand\zwu@title@page@bachelor{%
   \begin{titlepage}%
     \zwu@pdfbookmark{Title page}%
     \centering
     % \vspace*{68bp}%
     \vspace*{29.5bp}%
-    \begingroup
-      \Simsun\fontsize{26bp}{72.8bp}\selectfont
-      \renewcommand\CJKglue{\hspace{6.2bp}}%
-      浙江万里学院\par
-    \endgroup
-    % \includegraphics{figures/zwu-name-stxingkai.pdf}\par
+    \includegraphics{figures/zwu-name-stxingkai.pdf}\par
     \vspace{0.8bp}%
     \begingroup
-      \Simsun\fontsize{42bp}{72.8bp}\selectfont
+      \sffamily\fontsize{56bp}{72.8bp}\selectfont
       \renewcommand\CJKglue{\hspace{6.2bp}}%
-      本科毕业设计(论文)\par
+      本科毕业论文\par
     \endgroup
-    % \vspace{52bp}%
-    % \ifzwu@badge@color@blue
-    %   \textcolor{zwublue}{%
-    %     \includegraphics[height=126bp]{figures/zwu-badge.pdf}}%
-    % \else
-    %   \includegraphics[height=4.1cm]{figures/zwu-badge.pdf}%
-    % \fi\par
+    \vspace{52bp}%
+    \ifzwu@badge@color@blue
+      \textcolor{zwublue}{%
+        \includegraphics[height=126bp]{figures/zwu-badge.pdf}}%
+    \else
+      \includegraphics[height=4.1cm]{figures/zwu-badge.pdf}%
+    \fi\par
     \vspace{43bp}%
     \parbox[t][115bp][t]{\textwidth}{%
       \centering\sffamily\bfseries\fontsize{26bp}{46.8bp}\selectfont
@@ -2095,15 +1995,11 @@
   \newgeometry{margin=2.54cm}%
   \pagenumbering{Alph}%
   \pagestyle{empty}%
-  \ifzwu@degree@graduate
-    \zwu@title@page@graduate@zh
-    \zwu@title@page@graduate@en
-  \else
-    \zwu@title@page@bachelor
-  \fi
+  \zwu@title@page@bachelor
   \cleardoublepage
   \restoregeometry
   \pagestyle{plain}%
+  
 }
 
 
@@ -2190,16 +2086,6 @@
 \DeclareRobustCommand\zwu@spacetitle[1]{%
   \zwu@titlelength=\csname str_count:N\endcsname{#1}%
   \begingroup
-    \ifzwu@degree@graduate
-      \ifcase\zwu@titlelength
-      \or\or
-        \ziju{2}%
-      \or
-        \ziju{1}%
-      \or
-        \ziju{0.5}%
-      \fi
-    \else
       \if@mainmatter\else
         \ifcase\zwu@titlelength
         \or\or
@@ -2208,7 +2094,6 @@
           \ziju{0.5}%
         \fi
       \fi
-    \fi
     #1%
   \endgroup
 }
@@ -2315,7 +2200,6 @@
 }
 
 % 在研究生格式的基础上再设置本科生的章节标题格式。
-\ifzwu@degree@bachelor
   \setcounter{secnumdepth}{4}
   \ctexset{
   %
@@ -2367,7 +2251,6 @@
       },
     }
   \fi
-\fi
 
 % 默认的 \cs{chapter*} 生成的章标题没有编号、不更改页眉，
 % 也不添加进目录或 PDF 书签。
@@ -2390,18 +2273,10 @@
 
 % 中文摘要环境。
 \newcommand\zwu@keywords@text{%
-  \ifzwu@degree@graduate
-    \zwu@clist@use{\zwu@keywords}{\quad}%
-  \else
-    \zwu@clist@use{\zwu@keywords}{；}%
-  \fi
+  \zwu@clist@use{\zwu@keywords}{、}%
 }
 \newcommand\zwu@keywords@en@text{%
-  \ifzwu@degree@graduate
-    \zwu@clist@use{\zwu@keywords@en}{, }%
-  \else
-    \zwu@clist@use{\zwu@keywords@en}{; }%
-  \fi
+  \zwu@clist@use{\zwu@keywords@en}{, }%
 }
 \newenvironment{abstract}{%
   \zwusetup{language=chinese}%
@@ -2418,24 +2293,17 @@
 % 英文摘要环境
 \newenvironment{abstract*}{%
   \zwusetup{language=english}%
-  \ifzwu@degree@graduate
-    \zwu@chapter[Abstract]{ABSTRACT}%
-  \else
     \begingroup
       % 本科生的英文摘要使用小二号衬线体
       \ctexset{chapter/format=\centering\fontsize{18bp}{33bp}\selectfont}%
       \zwu@chapter{ABSTRACT}%
     \endgroup
-  \fi
 }{
   \par\null\par\noindent
   \savebox\zwu@keywords@box{\textbf{Key Words}: }%
   \zwu@keywords@width=\linewidth
   \advance\zwu@keywords@width-\wd\zwu@keywords@box
   \textbf{Key Words}: \parbox[t]{\zwu@keywords@width}{\zwu@keywords@en@text\par}\par
-  \ifzwu@degree@graduate
-    \cleardoublepage
-  \fi
   \zwu@reset@main@language
 }
 
@@ -2452,11 +2320,9 @@
 % 研究生规定目录另面起；
 % 本科生规定从目录开始编页码，所以必须另页起。
 \renewcommand\tableofcontents{%
-  \ifzwu@degree@bachelor
     \cleardoublepage
     \pagenumbering{arabic}%
     \pagestyle{plain}%
-  \fi
   \zwu@chapter{\contentsname}%
   \@starttoc{toc}%
 }
@@ -2474,30 +2340,6 @@
 % 各章目录要求宋体 14 磅，单倍行距，段前 6 磅，段后 0 磅，两端对齐，
 % 页码右对齐，章序号与章名间空一字。
 % 但是 Word 模板中实际是行距 20 磅。
-\ifzwu@degree@graduate
-  \titlecontents{chapter}
-    [\z@]{\addvspace{6bp}\fontsize{14bp}{20bp}\selectfont}
-    {\contentspush{\thecontentslabel\hspace{\ccwd}}}{}
-    {\fontsize{12bp}{20bp}\selectfont\zwu@leaders\thecontentspage}
-    %
-    % 一级节标题目录要求宋体 12 磅，单倍行距，左缩进一字，段前 6 磅，段后 0 磅，
-    % 两端对齐，页码右对齐，序号与题名间空一字。
-    % Word 模板中实际是行距 20 磅，段前 0 磅。
-  \titlecontents{section}
-    [\ccwd]{\fontsize{12bp}{20bp}\selectfont}
-    {\contentspush{\thecontentslabel\hspace{\ccwd}}}{}
-    {\zwu@leaders\thecontentspage}
-    %
-    % 二级节标题目录要求仿宋 12 磅，单倍行距，左缩进两字，段前 6 磅，段后 0 磅，
-    % 两端对齐，页码右对齐，序号与题名间空一字。
-    % Word 模板中实际是行距 20 磅，段前 0 磅。
-  \titlecontents{subsection}
-    [2\ccwd]{\fangsong\fontsize{12bp}{20bp}\selectfont}
-    {\contentspush{\thecontentslabel\hspace{\ccwd}}}{}
-    {\zwu@leaders\thecontentspage}
-    %
-    % 本科生的目录使用小四宋体（同正文字体），其他同研究生的格式相近。
-\else
   \titlecontents{chapter}
     [\z@]{\normalsize}
     {\contentspush{\thecontentslabel\unskip\hspace{\ccwd}}}{}
@@ -2511,7 +2353,7 @@
     {\contentspush{\thecontentslabel
       \ifzwu@section@style@arabic\hspace{\ccwd}\else 、\fi}}{}
     {\zwu@leaders\thecontentspage}
-\fi
+
 
 % 本科生要求目录中正文每章前多空一行，而目录、附录等章则不需要空行，
 % 所以不能简单判断 \cs{if@mainmatter}，需要重新定义 \cs{mainmatter} 等命令。
@@ -2555,16 +2397,10 @@
 \zwu@set@lof@format
 \zwu@option@hook{main-language}{\zwu@set@lof@format}
 \renewcommand\listoffigures{%
-  \ifzwu@degree@graduate
-    \cleardoublepage
-  \fi
   \zwu@chapter{\listfigurename}%
   \@starttoc{lof}%
 }
 \renewcommand\listoftables{%
-  \ifzwu@degree@graduate
-    \cleardoublepage
-  \fi
   \zwu@chapter{\listtablename}%
   \@starttoc{lot}%
 }
@@ -2574,33 +2410,24 @@
 
 % 研究生规定符号说明另页起，标题字体字号等同论文正文，
 % 《撰写手册》第 9 页 1.10(2) 还规定“符号说明不加页码”。
-\newenvironment{notation}{%
-  \ifzwu@degree@graduate
-    \cleardoublepage
-    \pagestyle{headings}%
-  \fi
-  \zwu@chapter{\zwu@notation@name}%
-}{%
-  \ifzwu@degree@graduate
-    \clearpage
-    \pagestyle{plain}%
-  \fi
-}%
-\newcommand*\notationlabel[1]{#1\hfil}%
-\newenvironment{notationlist}[1]{%
-  \list{}{%
-    \itemsep 3bp%
-    \labelwidth #1\relax%
-    \labelsep 1em%
-    \leftmargin\labelwidth
-    \advance\leftmargin\labelsep
-    \advance\leftmargin 3em%
-    \rightmargin 3em%
-    \let\makelabel\notationlabel
-  }%
-}{%
-  \endlist
-}
+%\newenvironment{notation}{%
+%  \zwu@chapter{\zwu@notation@name}%
+%}%
+%\newcommand*\notationlabel[1]{#1\hfil}%
+%\newenvironment{notationlist}[1]{%
+%  \list{}{%
+%    \itemsep 3bp%
+%    \labelwidth #1\relax%
+%    \labelsep 1em%
+%    \leftmargin\labelwidth
+%    \advance\leftmargin\labelsep
+%    \advance\leftmargin 3em%
+%    \rightmargin 3em%
+%    \let\makelabel\notationlabel
+%  }%
+%}{%
+%  \endlist
+%}
 
 
 % \subsection{正文}
@@ -2728,10 +2555,6 @@
   figureposition = bottom,
   tableposition  = top,
 }
-\ifzwu@degree@graduate
-  \captionsetup{font+=bf}
-  \captionsetup[table]{font+=sf}
-\fi
 \captionsetup[figure]{
   belowskip = 6bp,
 }
@@ -3104,11 +2927,7 @@
   % 参考文献列表格式：宋体 10.5 磅，行距 20 磅，续行缩进两字，左对齐。
   % 本科生依然是小四宋体。
   \renewcommand\bibfont{%
-    \ifzwu@degree@graduate
-      \fontsize{10.5bp}{20bp}\selectfont
-    \else
-      \normalsize
-    \fi
+    \normalsize
   }
   \setlength{\bibsep}{0\p@ \@plus.2\p@}
   \renewcommand\@biblabel[1]{[#1]\hfill}
@@ -3125,11 +2944,7 @@
     \chapter{\bibname}%
   }
   \renewcommand\bibfont{%
-    \ifzwu@degree@graduate
-      \fontsize{10.5bp}{20bp}\selectfont
-    \else
-      \normalsize
-    \fi
+    \fontsize{10.5bp}{20bp}\selectfont
   }
   \setlength{\bibitemsep}{0\p@ \@plus.2\p@}
   \setlength{\bibhang}{2\ccwd}
@@ -3161,12 +2976,6 @@
   \end{acknowledgements}%
 }
 
-% 发表成果环境：
-\newenvironment{publications}{%
-  \@mainmatterfalse
-  \chapter{\zwu@publication@name}%
-}{}
-
 
 % \subsection{其他宏包的设置}
 
@@ -3186,28 +2995,14 @@
   }
   %
   % 如果为 \opt{pdf} 样式，设置 hyperlink 颜色
-  \ifzwu@output@electronic
-    \hypersetup{
-      colorlinks = true,
-      allcolors  = blue,
-    }
-  \else
-    \hypersetup{hidelinks}
-  \fi
+  \hypersetup{hidelinks}
   %
   % 填写 PDF 元信息。
   \AtBeginDocument{%
-    \ifzwu@main@language@chinese
-      \hypersetup{
-        pdftitle  = \zwu@title,
-        pdfauthor = \zwu@author,
-      }%
-    \else
-      \hypersetup{
-        pdftitle  = \zwu@title@en,
-        pdfauthor = \zwu@author@en,
-      }%
-    \fi
+    \hypersetup{
+      pdftitle  = \zwu@title,
+      pdfauthor = \zwu@author,
+    }%
   }
   %
   % 添加 PDF 书签
@@ -3245,7 +3040,7 @@
     \def\tableautorefname{表}
     \def\partautorefname~#1\null{第~#1~部分\null}
     \def\appendixautorefname{附录}
-    \def\chapterautorefname~#1\null{第~#1~章\null}
+    \def\chapterautorefname~#1\null{#1.~\null}
     \def\sectionautorefname~#1\null{第~#1~节\null}
     \def\subsectionautorefname~#1\null{第~#1~小节\null}
     \def\subsubsectionautorefname~#1\null{第~#1~小小节\null}
@@ -3350,16 +3145,11 @@
   \SetAlCapSkip{6bp}
   \SetAlCapFnt{\small}
   \SetAlCapNameFnt{\small}
-  \ifzwu@degree@graduate
-    \SetAlCapNameSty{textbf}
-  \fi
+  \SetAlCapNameSty{textbf}
   \SetAlgoCaptionSeparator{\unskip\hspace*{\ccwd}}
   %
   % 设置算法清单的格式
   \renewcommand\listofalgocfs{%
-    \ifzwu@degree@graduate
-      \cleardoublepage
-    \fi
     \zwu@chapter{\listalgorithmcfname}%
     \@starttoc{loa}%
   }
@@ -3388,10 +3178,7 @@
 \AtEndOfPackageFile*{nomencl}{
   \let\nomname\zwu@notation@name
   \def\thenomenclature{%
-    \ifzwu@degree@graduate
-      \cleardoublepage
-      \pagestyle{headings}%
-    \fi
+    \pagestyle{headings}%
     \zwu@chapter{\zwu@notation@name}%
     \nompreamble
     \list{}{%
@@ -3403,10 +3190,8 @@
   \def\endthenomenclature{%
     \endlist
     \nompostamble
-    \ifzwu@degree@graduate
-      \clearpage
-      \pagestyle{plain}%
-    \fi
+    \clearpage
+    \pagestyle{plain}%
   }
 }
 
